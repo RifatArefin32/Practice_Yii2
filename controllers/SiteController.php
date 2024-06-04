@@ -78,6 +78,9 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
+        //if ($model->load(Yii::$app->request->post())) {
+            // var_dump($model);
+            // die;
             return $this->render('index', [
                 'model' => $model,
             ]);
@@ -94,9 +97,8 @@ class SiteController extends Controller
     {
         $model = new SignupForm();
         if ($model->load(Yii::$app->request->post()) && $model->singup()){
-
-
-
+            // var_dump($model);
+            // die;
             Yii::$app->session->setFlash('success', 'Thank you for registration. Please check inbox for verification');
             return $this->goHome();
         }

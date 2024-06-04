@@ -12,7 +12,7 @@ class ProductController extends ActiveController{
 
     public function behaviors(){
         $behaviors = parent::behaviors();
-        $behaviors["authenticator"] = [
+        //$behaviors["authenticator"] = [
             
             // Bearar Token Authentication
             // "class" => \yii\filters\auth\HttpBearerAuth::class,
@@ -59,7 +59,7 @@ class ProductController extends ActiveController{
             //         'only' => ['optional-test'],
             //     ]
             // ],
-        ];
+        //];
         return $behaviors;
     }
 

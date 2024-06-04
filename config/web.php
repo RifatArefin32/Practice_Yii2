@@ -53,10 +53,10 @@ $config = [
         'db' => $db,
         'urlManager' => [
             'enablePrettyUrl' => true,
-            // 'enableStrictParsing' => true,
+            'enableStrictParsing' => false,
             'showScriptName' => false,
             // 'rules' => [
-            //     ['class' => 'yii\rest\UrlRule', 'controller' => 'v1\product'],
+            //     ['class' => 'yii\rest\UrlRule', 'controller' => 'user'],
             // ],
         ]
     ],

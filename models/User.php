@@ -3,49 +3,34 @@
 namespace app\models;
 
 use Yii;
-use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 
 /**
- * User model
+ * This is the model class for table "user".
  *
- * @property integer $id
+ * @property int $id
  * @property string $username
+ * @property string $auth_key
+ * @property string $verification_token
  * @property string $password
  * @property string $password_reset_token
- * @property string $verification_token
  * @property string $email
- * @property string $auth_key
- * @property integer $status
- * @property integer $created_at
- * @property integer $updated_at
- * @property string $password write-only password
+ * @property int $status
+ * @property int $created_at
+ * @property int $updated_at
  */
-class User extends ActiveRecord implements IdentityInterface
+class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
     const STATUS_DELETED = 0;
     const STATUS_INACTIVE = 9;
     const STATUS_ACTIVE = 10;
-
-
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return '{{%user}}';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function behaviors()
-    {
-        return [
-            TimestampBehavior::class,
-        ];
+        return 'user';
     }
 
     /**
@@ -54,8 +39,44 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            ['status', 'default', 'value' => self::STATUS_INACTIVE],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETED]],
+            [['username', 'auth_key', 'verification_token', 'password', 'password_reset_token', 'email'], 'required'],
+            
+            ['username', 'unique', 'targetClass' => 'app\models\User', 'message' => 'This username has already taken.'],
+            ['username','string','min' => 4, 'max'=> 255],
+
+            ['email','email'],
+            ['email','string','max'=> 255],
+            ['email','unique', 'targetClass' => '\app\models\User', 'message'=> 'This email has already taken'],
+
+            ['password', 'string', 'min' => Yii::$app->params['user.passwordMinLenght']],
+
+            [['auth_key', 'verification_token', 'password', 'password_reset_token'], 'string'],
+            [['status', 'created_at', 'updated_at'], 'integer'],
+            [['username', 'email'], 'string', 'max' => 255],
+        ];
+    }
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::class,
+        ];
+    }
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'username' => 'Username',
+            'auth_key' => 'Auth Key',
+            'verification_token' => 'Verification Token',
+            'password' => 'Password',
+            'password_reset_token' => 'Password Reset Token',
+            'email' => 'Email',
+            'status' => 'Status',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
         ];
     }
 
@@ -84,7 +105,8 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findByUsername($username)
     {
-        return static::findOne(['username' => $username, 'status' => self::STATUS_INACTIVE]);
+        //return static::findOne(['username' => $username, 'status' => self::STATUS_INACTIVE]);
+        return static::findOne(['username' => $username]);
     }
 
     /**

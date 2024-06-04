@@ -19,7 +19,7 @@ class SignupForm extends Model
     public function rules()
     {
         return [
-            [['username', 'email'], 'trim'],
+            // [['username', 'email'], 'trim'],
             [['username','email', 'password'],'required'],
 
             ['username', 'unique', 'targetClass' => 'app\models\User', 'message' => 'This username has already taken.'],
@@ -37,7 +37,6 @@ class SignupForm extends Model
         if(!$this->validate()){
             return null;
         }
-
         $user = new User();
         $user->username = $this->username;
         $user->email = $this->email;
@@ -45,23 +44,8 @@ class SignupForm extends Model
         $user->generateAuthKey();
         $user->generatePasswordResetToken();
         $user->generateEmailVerificationToken();
-
-        // return $user->save() && $this->sendEmail($user);
-        return $user->save();
-        
-    }
-
-    protected function sendEmail($user){
-        return Yii::$app
-        ->mailer
-        ->compose(
-            ['html' => 'emailVerify-html', 'text' => 'emailVerify-text'],
-            ['user' => $user]
-        )
-        ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . 'robot'])
-        ->setTo($this->email)
-        ->setSubject('Accout registration at '. Yii::$app->name)
-        ->send();
+        $user->save();
+        return true;
     }
    
 }
